@@ -2,10 +2,26 @@ import torch
 import torch.nn as nn
 
 
-# Définir le générateur
+# Générateur
 class Generator(nn.Module):
-    def __init__(self, input_size, hidden_size, output_size, ar_size=7):
+    def __init__(self, input_size, output_size):
         super(Generator, self).__init__()
+        self.model = nn.Sequential(
+            nn.Linear(input_size, 128),
+            nn.ReLU(),
+            nn.Linear(128, 256),
+            nn.ReLU(),
+            nn.Linear(256, output_size),
+        )
+
+    def forward(self, z):
+        return self.model(z)
+
+
+# Définir le générateur
+class ARGenerator(nn.Module):
+    def __init__(self, input_size, output_size, hidden_size=128, ar_size=7):
+        super(ARGenerator, self).__init__()
         self.fc1 = nn.Linear(input_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, hidden_size)
         self.fc3 = nn.Linear(hidden_size, output_size)

@@ -1,6 +1,6 @@
 import unittest
 import torch
-from wind_gan.generator import Generator
+from wind_gan.generator import ARGenerator
 
 
 class TestGenerator(unittest.TestCase):
@@ -10,13 +10,13 @@ class TestGenerator(unittest.TestCase):
     def test_generator(self):
         # Paramètres du GAN
         input_size = 100  # Taille de l'entrée aléatoire pour le générateur
-        hidden_size = 128  # Taille des couches cachées
+        # hidden_size = 128  # Taille des couches cachées
         output_size = 1000  # Taille de la séquence de sortie (signal 1D)
 
         torch.manual_seed(0)
 
         # Instancier le générateur
-        generator = Generator(input_size, hidden_size, output_size)
+        generator = ARGenerator(input_size, output_size)
 
         # Exemple d'utilisation
         random_input = torch.randn(input_size).view(
