@@ -1,17 +1,22 @@
 import torch
 import torch.nn as nn
 
+from iapytoo.train.factories import Model
+
 
 # Générateur
-class Generator(nn.Module):
-    def __init__(self, input_size, output_size):
-        super(Generator, self).__init__()
+class Generator(Model):
+    def __init__(self, loader, config) -> None:
+        super(Generator, self).__init__(loader, config)
+        noise_dim = config["noise_dim"]
+        dataset = loader.dataset
+
         self.model = nn.Sequential(
-            nn.Linear(input_size, 128),
+            nn.Linear(noise_dim, 128),
             nn.ReLU(),
             nn.Linear(128, 256),
             nn.ReLU(),
-            nn.Linear(256, output_size),
+            nn.Linear(256, dataset.signal_length),
         )
 
     def forward(self, z):

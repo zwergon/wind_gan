@@ -6,8 +6,9 @@ import numpy as np
 
 # Définition de la couche personnalisée pour la DFT
 class DFTLayer(nn.Module):
-    def __init__(self, input_size):
-        super(DFTLayer, self).__init__()
+    def __init__(self, input_size, **kwarg):
+        super(DFTLayer, self).__init__(**kwarg)
+        print(kwarg)
         self.input_size = input_size
         self.n = torch.arange(input_size).float()
         self.f = torch.arange(input_size).float().view(-1, 1)
