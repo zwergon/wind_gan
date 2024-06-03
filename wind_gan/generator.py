@@ -4,6 +4,36 @@ import torch.nn as nn
 from iapytoo.train.factories import Model
 
 
+class CNN1DGenerator(Model):
+    def __init__(self, loader, config):
+        super(CNN1DGenerator, self).__init__(loader, config)
+        noise_dim = config["noise_dim"]
+        dataset = loader.dataset
+
+        kernel_size = dataset.signal_length // 16  # 4 couches qui multiplient par 2
+
+        self.main = nn.Sequential(
+            nn.ConvTranspose1d(noise_dim, 512, kernel_size, 1, 0, bias=False),
+            nn.BatchNorm1d(512),
+            nn.ReLU(True),
+            nn.ConvTranspose1d(512, 256, 4, 2, 1, bias=False),
+            nn.BatchNorm1d(256),
+            nn.ReLU(True),
+            nn.ConvTranspose1d(256, 128, 4, 2, 1, bias=False),
+            nn.BatchNorm1d(128),
+            nn.ReLU(True),
+            nn.ConvTranspose1d(128, 64, 4, 2, 1, bias=False),
+            nn.BatchNorm1d(64),
+            nn.ReLU(True),
+            nn.ConvTranspose1d(64, 1, 4, 2, 1, bias=False),
+            nn.Tanh(),
+        )
+
+    def forward(self, x):
+        x = self.main(x)
+        return x
+
+
 # Générateur
 class Generator(Model):
     def __init__(self, loader, config) -> None:

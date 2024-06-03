@@ -14,10 +14,10 @@
     "scheduler": "step",
     "gamma": 0.7,
     "lambda_gp": 10,
-    "noise_dim": 64,
+    "noise_dim": 100,
     "seed": 1,
-    "batch_size": 64,
-    "epochs": 11,
+    "batch_size": 8,
+    "epochs": 101,
     "learning_rate": 1e-4,
     "weight_decay": 1e-7
 }

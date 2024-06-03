@@ -8,8 +8,8 @@ from torch.autograd import grad
 from iapytoo.train.wgan import WGAN
 from iapytoo.utils.config import Config
 
-from wind_gan.generator import Generator
-from wind_gan.critic import Critic
+from wind_gan.generator import CNN1DGenerator
+from wind_gan.critic import CNN1DDiscriminator
 from wind_gan.dataset import BinDataset
 
 from iapytoo.train.factories import ModelFactory, OptimizerFactory
@@ -26,8 +26,8 @@ if __name__ == "__main__":
     )
 
     model_factory = ModelFactory()
-    model_factory.register_model("generator", Generator)
-    model_factory.register_model("critic", Critic)
+    model_factory.register_model("generator", CNN1DGenerator)
+    model_factory.register_model("critic", CNN1DDiscriminator)
 
     o_factory = OptimizerFactory()
     print(o_factory.optimizers_dict)
