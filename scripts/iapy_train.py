@@ -10,7 +10,7 @@ from iapytoo.utils.config import Config
 
 from wind_gan.generator import CNN1DGenerator
 from wind_gan.critic import CNN1DDiscriminator
-from wind_gan.dataset import BinDataset, LatentDataset
+from wind_gan.dataset import SinDataset, LatentDataset
 
 from iapytoo.train.factories import ModelFactory, OptimizerFactory
 from iapytoo.predictions.plotters import FakePlotter
@@ -20,7 +20,7 @@ if __name__ == "__main__":
     config = Config(os.path.join(os.path.dirname(__file__), "config_wgan.json"))
 
     # load training data
-    trainset = BinDataset()
+    trainset = SinDataset(10000, 1200)
 
     trainloader = torch.utils.data.DataLoader(
         trainset, batch_size=config.batch_size, shuffle=True, drop_last=True

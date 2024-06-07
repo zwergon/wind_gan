@@ -25,6 +25,16 @@ class _Dataset(Dataset):
         return step, target
 
 
+class SinDataset(_Dataset):
+     def __init__(self):
+        super().__init__(
+            filename=os.path.join(
+                os.path.dirname(__file__),
+                "../tests/data/sin_wav.csv",
+            )
+        )
+      
+
 class BinDataset(_Dataset):
     def __init__(self):
         super().__init__(
@@ -47,16 +57,3 @@ class LatentDataset(Dataset):
     def __getitem__(self, _):
         noise = torch.randn(self.noise_dim, 1)
         return noise
-
-
-if __name__ == "__main__":
-    dataset = BinDataset()
-
-    print("signal_length", dataset.signal_length)
-    print("dataset size", len(dataset))
-    for i in range(3):
-        idx = int(np.random.random() * len(dataset))
-        print("idx", idx)
-        spectra, target = dataset[idx]
-        plt.plot(spectra + i)
-    plt.show()
