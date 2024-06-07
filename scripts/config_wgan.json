@@ -1,6 +1,6 @@
 {
     "project": "wgan",
-    "run": "wgan",
+    "run": "cnn1d",
     "tracking_uri": null,
     "tqdm": true,
     "normalization": true,
@@ -10,14 +10,15 @@
     "cuda": true,
     "generator": "generator",
     "discriminator": "critic",
+    "n_critic": 5,
     "optimizer": "adam",
     "scheduler": "step",
     "gamma": 0.7,
+    "betas": [0.5, 0.99],
     "lambda_gp": 10,
     "noise_dim": 100,
     "seed": 1,
     "batch_size": 8,
     "epochs": 101,
-    "learning_rate": 1e-4,
-    "weight_decay": 1e-7
+    "learning_rate": 1e-4
 }

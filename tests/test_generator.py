@@ -35,7 +35,7 @@ class TestGenerator(unittest.TestCase):
         )
 
         netG = CNN1DGenerator(config=config, loader=trainloader)
-        noise = torch.randn(config["batch_size"], config["noise_dim"], 1)
+        noise = torch.randn(config["batch_size"], config["noise_dim"])
         print(noise.shape)
         out = netG(noise)
         print(out.shape)

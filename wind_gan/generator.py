@@ -1,19 +1,29 @@
 import torch
 import torch.nn as nn
 
-from iapytoo.train.factories import Model
+from iapytoo.train.factories import Model, WeightInitiator
+
+
+class CNN1DInitiator(WeightInitiator):
+    def __call__(self, m):
+        classname = m.__class__.__name__
+        if classname.find("Conv") != -1:
+            nn.init.normal_(m.weight.data, 0.0, 0.02)
+        elif classname.find("BatchNorm") != -1:
+            nn.init.normal_(m.weight.data, 1.0, 0.02)
+            nn.init.constant_(m.bias.data, 0)
 
 
 class CNN1DGenerator(Model):
     def __init__(self, loader, config):
         super(CNN1DGenerator, self).__init__(loader, config)
-        noise_dim = config["noise_dim"]
+        self.noise_dim = config["noise_dim"]
         dataset = loader.dataset
 
         kernel_size = dataset.signal_length // 16  # 4 couches qui multiplient par 2
 
         self.main = nn.Sequential(
-            nn.ConvTranspose1d(noise_dim, 512, kernel_size, 1, 0, bias=False),
+            nn.ConvTranspose1d(self.noise_dim, 512, kernel_size, 1, 0, bias=False),
             nn.BatchNorm1d(512),
             nn.ReLU(True),
             nn.ConvTranspose1d(512, 256, 4, 2, 1, bias=False),
@@ -29,9 +39,24 @@ class CNN1DGenerator(Model):
             nn.Tanh(),
         )
 
-    def forward(self, x):
-        x = self.main(x)
-        return x
+    def get_noise(self, n_samples, noise_dim, device="cpu"):
+        return torch.randn(n_samples, noise_dim, device=device)
+
+    def unsqueeze_noise(self, noise):
+        """
+        Function for completing a forward pass of the generator: Given a noise tensor,
+        returns a copy of that noise with width and height = 1 and channels = z_dim.
+        Parameters:
+            noise: a noise tensor with dimensions (n_samples, z_dim)
+        """
+        return noise.view(noise.shape[0], self.noise_dim, 1)
+
+    def weight_initiator(self):
+        return CNN1DInitiator()
+
+    def forward(self, noise):
+        x = self.unsqueeze_noise(noise)
+        return self.main(x)
 
 
 # Générateur

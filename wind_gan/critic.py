@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from wind_gan.dft_layer import DFTLayer
 from iapytoo.train.factories import Model
+from wind_gan.generator import CNN1DInitiator
 
 
 class CNN1DDiscriminator(Model):
@@ -31,6 +32,9 @@ class CNN1DDiscriminator(Model):
             nn.Conv1d(512, 1, kernel_size=kernel_size, stride=1, padding=0, bias=False),
             nn.Sigmoid(),
         )
+
+    def weight_initiator(self):
+        return CNN1DInitiator()
 
     def forward(self, x, y=None):
         x = self.main(x)

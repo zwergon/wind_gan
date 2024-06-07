@@ -10,9 +10,10 @@ from iapytoo.utils.config import Config
 
 from wind_gan.generator import CNN1DGenerator
 from wind_gan.critic import CNN1DDiscriminator
-from wind_gan.dataset import BinDataset
+from wind_gan.dataset import BinDataset, LatentDataset
 
 from iapytoo.train.factories import ModelFactory, OptimizerFactory
+from iapytoo.predictions.plotters import FakePlotter
 
 
 if __name__ == "__main__":
@@ -25,12 +26,13 @@ if __name__ == "__main__":
         trainset, batch_size=config.batch_size, shuffle=True, drop_last=True
     )
 
+    latentset = LatentDataset(config.noise_dim, size=16)
+
+    valid_loader = torch.utils.data.DataLoader(latentset, batch_size=16, shuffle=False)
+
     model_factory = ModelFactory()
     model_factory.register_model("generator", CNN1DGenerator)
     model_factory.register_model("critic", CNN1DDiscriminator)
 
-    o_factory = OptimizerFactory()
-    print(o_factory.optimizers_dict)
-
-    wgan = WGAN(config)
-    wgan.fit(train_loader=trainloader, valid_loader=None, run_id=None)
+    wgan = WGAN(config, prediction_plotter=FakePlotter(n_plot=2))
+    wgan.fit(train_loader=trainloader, valid_loader=valid_loader, run_id=None)

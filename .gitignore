@@ -161,3 +161,4 @@ cython_debug/
 github.token
 .vscode/
 mlruns/
+*.code-workspace
