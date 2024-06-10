@@ -1,6 +1,6 @@
 import unittest
 import torch
-from wind_gan.generator import ARGenerator, CNN1DGenerator
+from wind_gan.generator import ARGenerator, CNN1DGenerator, GruGenerator
 from wind_gan.dataset import BinDataset
 
 
@@ -35,10 +35,25 @@ class TestGenerator(unittest.TestCase):
         )
 
         netG = CNN1DGenerator(config=config, loader=trainloader)
-        noise = torch.randn(config["batch_size"], config["noise_dim"])
+        noise = CNN1DGenerator.get_noise(config["batch_size"], config["noise_dim"])
         print(noise.shape)
         out = netG(noise)
         print(out.shape)
+
+    def test_gru(self):
+        config = {"batch_size": 6, "noise_dim": 100, "hidden_size": 128}
+
+        dataset = BinDataset()
+        trainloader = torch.utils.data.DataLoader(
+            dataset, batch_size=config["batch_size"], shuffle=True, drop_last=True
+        )
+
+        netG = GruGenerator(config=config, loader=trainloader)
+        noise = netG.get_noise(config["batch_size"], config["noise_dim"])
+        self.assertListEqual(list(noise.shape), [6, 100])
+        out = netG(noise)
+        
+        self.assertListEqual(list(out.shape), [6, 1, 1200])
 
 
 if __name__ == "__main__":

@@ -78,6 +78,41 @@ class Generator(Model):
         return self.model(z)
 
 
+
+    
+class GruGenerator(Model):
+    def __init__(self, loader, config):
+        super(GruGenerator, self).__init__(loader, config)
+        self.noise_dim = config["noise_dim"]
+        self.hidden_size = config["hidden_size"]
+        dataset = loader.dataset
+
+        self.gru = nn.GRU(self.noise_dim, self.hidden_size, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, dataset.signal_length)
+
+    def get_noise(self, n_samples, noise_dim, device="cpu"):
+        return torch.randn(n_samples, noise_dim, device=device)
+
+    def unsqueeze_noise(self, noise):
+        """
+        Function for completing a forward pass of the generator: Given a noise tensor,
+        returns a copy of that noise with width and height = 1 and channels = z_dim.
+        Parameters:
+            noise: a noise tensor with dimensions (n_samples, z_dim)
+        """
+        # 'z' doit avoir la forme (batch_size, sequence_length, latent_dim)
+        # at that point one noise vector with noise_dim features -> [batch, 1 , noise_dim]
+        return noise.view(noise.shape[0], 1, self.noise_dim)
+
+    def forward(self, noise):
+        z = self.unsqueeze_noise(noise)
+        batch_size = z.size(0)
+        h_0 = torch.zeros(1, batch_size, self.hidden_size).to(z.device)
+        gru_out, _ = self.gru(z, h_0)
+        output = self.fc(gru_out)
+        return output
+
+
 # Définir le générateur
 class ARGenerator(nn.Module):
     def __init__(self, input_size, output_size, hidden_size=128, ar_size=7):

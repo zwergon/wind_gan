@@ -8,8 +8,10 @@
     "ratio_train_test": 0.9,
     "num_workers": 2,
     "cuda": true,
-    "generator": "generator",
-    "discriminator": "critic",
+    "generator": "g_gru",
+    "discriminator": "d_cnn1d",
+    "hidden_size": 128,
+    "clip_value": 0.1,
     "n_critic": 5,
     "optimizer": "adam",
     "scheduler": "step",
@@ -19,6 +21,6 @@
     "noise_dim": 20,
     "seed": 1,
     "batch_size": 128,
-    "epochs": 101,
+    "epochs": 201,
     "learning_rate": 1e-4
 }

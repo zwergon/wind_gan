@@ -44,14 +44,16 @@ if __name__ == "__main__":
         description="Parse two optional float arguments: number of samples and sequence length."
     )
 
+    parser.add_argument('outname', help='filename to store csv file')
+
     # Ajout de l'argument optionnel num_samples
-    parser.add_argument(
+    parser.add_argument("-n",
         "--num_samples", type=int, default=1000, help="Number of samples."
     )
 
     # Ajout de l'argument optionnel sequence_length
     parser.add_argument(
-        "--sequence_length",
+        "-s", "--sequence_length",
         type=int,
         default=1200,
         help="Length of the sequence.",
@@ -63,4 +65,4 @@ if __name__ == "__main__":
     print(f"Length of the sequence: {args.sequence_length}")
 
     data = sine_data_generation(args.num_samples, args.sequence_length)
-    np.savetxt("./sin_wav.cvs", data, delimiter=',')
+    np.savetxt(args.outname, data, delimiter=',')

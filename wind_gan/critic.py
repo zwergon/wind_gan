@@ -41,6 +41,25 @@ class CNN1DDiscriminator(Model):
         return x
 
 
+
+class GruDiscriminator(Model):
+    def __init__(self, loader, config):
+        super(GruDiscriminator, self).__init__(loader, config)
+        noise_dim = config["noise_dim"]
+        self.hidden_size = config["hidden_size"]
+        dataset = loader.dataset
+        self.gru = nn.GRU(dataset.signal_length, self.hidden_size, batch_first=True)
+        self.fc = nn.Linear(self.hidden_size, 1)
+
+    def forward(self, x):
+        # 'x' doit avoir la forme (batch_size, sequence_length, input_dim)
+        batch_size = x.size(0)
+        h_0 = torch.zeros(1, batch_size, self.hidden_size).to(x.device)  # Initial hidden state
+        gru_out, _ = self.gru(x, h_0)
+        output = self.fc(gru_out[:, -1, :])  # Utiliser la dernière sortie de la séquence
+        return output
+
+
 # Discriminateur utilisant la DFTLayer
 class Critic(Model):
     def __init__(self, loader, config) -> None:

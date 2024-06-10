@@ -21,7 +21,7 @@ class TestDataset(unittest.TestCase):
         plt.show()
 
     def test_sindataset(self):
-        dataset = SinDataset(10000, 1200)
+        dataset = SinDataset()
         print("signal_length", dataset.signal_length)
         print("dataset size", len(dataset))
         for i in range(3):

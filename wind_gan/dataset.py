@@ -10,6 +10,7 @@ class _Dataset(Dataset):
     def __init__(self, filename):
         super().__init__()
         self.dataset = np.loadtxt(filename, delimiter=",").astype(np.float32)
+        self.labels_size = 1
         # self.minmax_normalize()
 
     def __len__(self):
@@ -17,11 +18,11 @@ class _Dataset(Dataset):
 
     @property
     def signal_length(self):
-        return self.dataset.shape[1] - 1  # last column is one index
+        return self.dataset.shape[1] - self.labels_size  # last column is one index
 
     def __getitem__(self, idx):
-        step = self.dataset[idx : idx + 1, :-1]  # add channel [1, sequence_length]
-        target = self.dataset[idx, -1]
+        step = self.dataset[idx : idx + 1, :-self.labels_size]  # add channel [1, sequence_length]
+        target = self.dataset[idx, -self.labels_size]
         return step, target
 
 
@@ -33,6 +34,7 @@ class SinDataset(_Dataset):
                 "../tests/data/sin_wav.csv",
             )
         )
+        self.labels_size = 2
       
 
 class BinDataset(_Dataset):
@@ -43,6 +45,7 @@ class BinDataset(_Dataset):
                 "../tests/data/bin.csv",
             )
         )
+        self.labels_size = 1
 
 
 class LatentDataset(Dataset):
