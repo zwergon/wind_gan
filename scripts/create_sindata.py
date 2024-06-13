@@ -2,8 +2,9 @@ import argparse
 import numpy as np
 import argparse
 
+   
 
-def sine_data_generation(no, seq_len):
+def sine_data_generation(no, seq_len, t_max, main_frequency):
     """Sine data generation.
 
     Args:
@@ -14,27 +15,24 @@ def sine_data_generation(no, seq_len):
     Returns:
         - data: generated data
     """
+
+    t_step = t_max / seq_len
+    time = np.arange(0, t_max, t_step)
     # Initialize the output
     data = np.zeros(shape=(no, seq_len + 2), dtype=np.float32)
 
     # Generate sine data
     for i in range(no):
-        # Initialize each time-series
-        temp = list()
         # For each feature
 
         # Randomly drawn frequency and phase
-        freq = np.random.uniform(0, 0.1)
+        freq = main_frequency + np.random.uniform(-0.01, 0.01) # normal variation of 0.02 Hz around main_frequency 
         data[i, -1] = freq
-        phase = np.random.uniform(0, 0.1)
+        phase = np.random.uniform(-3, 3) # phase variation around 0 of 3 degres
         data[i, -2] = phase
         
         # Generate sine signal based on the drawn frequency and phase
-        for j in range(seq_len):
-            data[i, j] = np.sin(freq * j + phase)
-
-    # normalize
-    data[:, :-2] = (data[:, :-2] + 1) * 0.5
+        data[i, :-2] = np.sin(2*np.pi*freq*time+phase*np.pi/180)
 
     return data
 
@@ -46,23 +44,41 @@ if __name__ == "__main__":
 
     parser.add_argument('outname', help='filename to store csv file')
 
-    # Ajout de l'argument optionnel num_samples
+  
     parser.add_argument("-n",
         "--num_samples", type=int, default=1000, help="Number of samples."
     )
 
-    # Ajout de l'argument optionnel sequence_length
+    
+   
     parser.add_argument(
-        "-s", "--sequence_length",
+        "-s", "--seq_len",
         type=int,
-        default=1200,
-        help="Length of the sequence.",
+        default=600,
+        help="duration of the sequence in s",
+    )
+
+   
+    parser.add_argument(
+        "-d", "--duration",
+        type=int,
+        default=60,
+        help="duration of the sequence in s",
+    )
+
+    parser.add_argument(
+        "-f", "--freq",
+        type=float,
+        default=0.05,
+        help="main frequency in Hz (0.05)",
     )
 
     args = parser.parse_args()
 
     print(f"Number of samples: {args.num_samples}")
-    print(f"Length of the sequence: {args.sequence_length}")
+    print(f"Sequence Length: {args.seq_len}")
+    print(f"Duration: {args.duration}")
+    print(f"Frequency: {args.freq}")
 
-    data = sine_data_generation(args.num_samples, args.sequence_length)
+    data = sine_data_generation(args.num_samples, args.seq_len, args.duration, args.freq)
     np.savetxt(args.outname, data, delimiter=',')

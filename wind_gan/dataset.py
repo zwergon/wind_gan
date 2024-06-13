@@ -22,7 +22,7 @@ class _Dataset(Dataset):
 
     def __getitem__(self, idx):
         step = self.dataset[idx : idx + 1, :-self.labels_size]  # add channel [1, sequence_length]
-        target = self.dataset[idx, -self.labels_size]
+        target = self.dataset[idx, -self.labels_size:]
         return step, target
 
 

@@ -9,11 +9,12 @@ from iapytoo.train.wgan import WGAN
 from iapytoo.utils.config import Config
 
 from wind_gan.generator import CNN1DGenerator, GruGenerator
-from wind_gan.critic import CNN1DDiscriminator, GruDiscriminator
+from wind_gan.critic import CNN1DDiscriminator, GruDiscriminator, DFTCritic
 from wind_gan.dataset import SinDataset, LatentDataset
 
 from iapytoo.train.factories import ModelFactory, OptimizerFactory
 from iapytoo.predictions.plotters import Fake1DPlotter
+
 
 
 if __name__ == "__main__":
@@ -35,6 +36,7 @@ if __name__ == "__main__":
     model_factory.register_model("d_cnn1d", CNN1DDiscriminator)
     model_factory.register_model("g_gru", GruGenerator)
     model_factory.register_model("d_gru", GruDiscriminator)
+    model_factory.register_model("d_dft", DFTCritic)
     
 
 

@@ -61,7 +61,7 @@ class GruDiscriminator(Model):
 
 
 # Discriminateur utilisant la DFTLayer
-class Critic(Model):
+class DFTCritic(Model):
     def __init__(self, loader, config) -> None:
         super().__init__(loader, config)
         dataset = loader.dataset
