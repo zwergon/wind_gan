@@ -13,7 +13,7 @@ from wind_gan.critic import CNN1DDiscriminator, GruDiscriminator, DFTCritic
 from wind_gan.dataset import SinDataset, LatentDataset
 
 from iapytoo.train.factories import ModelFactory, OptimizerFactory
-from iapytoo.predictions.plotters import Fake1DPlotter
+from iapytoo.predictions.plotters import Fake1DPlotter, CollectionPlotters, DSPPlotter
 
 
 
@@ -38,7 +38,9 @@ if __name__ == "__main__":
     model_factory.register_model("d_gru", GruDiscriminator)
     model_factory.register_model("d_dft", DFTCritic)
     
+    plotter = CollectionPlotters("wind_gan")
+    plotter.plotters.append(Fake1DPlotter(n_plot=2)) 
+    plotter.plotters.append(DSPPlotter())
 
-
-    wgan = WGAN(config, prediction_plotter=Fake1DPlotter(n_plot=2))
+    wgan = WGAN(config, prediction_plotter=plotter)
     wgan.fit(train_loader=trainloader, valid_loader=valid_loader, run_id=None)
